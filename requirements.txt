@@ -1,0 +1,11 @@
+PyPDF2
+pandas
+numpy
+spacy
+nltk
+scikit-learn
+tensorflow
+mlflow
+streamlit
+kagglehub
+tqdm
