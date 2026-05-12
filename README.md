@@ -33,6 +33,32 @@ Sistem ini memproses data secara tidak terstruktur (PDF) menjadi representasi ve
 - **MLOps:** `MLflow` (Untuk *tracking* eksperimen & model)
 - **Deployment Interface:** `Streamlit`
 
+## Technical Documentation & Architecture
+
+Sistem *CareerMatch AI* beroperasi menggunakan arsitektur pemrosesan data linier. Fokus utamanya adalah transformasi data tidak terstruktur menjadi representasi matematis yang dapat dibandingkan.
+
+### 1. High-Level Workflow
+Sistem mengikuti alur kerja (pipeline) sebagai berikut:
+1. **Extraction:** Dokumen PDF dibaca secara mentah halaman demi halaman.
+2. **Purification:** Teks "disucikan" dari artefak digital (URL, Email, Simbol) tanpa menghilangkan terminologi IT (Alfanumerik).
+3. **Vectorization:** Teks bersih dikonversi menjadi matriks numerik menggunakan TF-IDF.
+4. **Scoring:** Menghitung jarak kosinus antara vektor CV dan vektor Lowongan Kerja untuk menentukan peringkat kecocokan.
+
+### 2. Data Extraction Layer (Tugas 1.1)
+* **Library:** `PyPDF2`
+* **Logika:** Fungsi `extract_pdf_text` melakukan iterasi pada setiap objek halaman PDF. Sistem dirancang untuk hanya menerima teks ATS-friendly. Jika teks tidak terdeteksi (PDF berbasis gambar), sistem akan memberikan nilai `None` sebagai pemicu (trigger) untuk fungsi *Error Handling* di sisi UI.
+
+### 3. NLP Preprocessing Pipeline (Tugas 2.2)
+* **Library:** `spaCy` (Model: `en_core_web_sm`), `re`.
+* **Strategi:** * **Lemmatization:** Berbeda dengan *stemming*, kami menggunakan Lemmatization untuk menjaga makna kata (e.g., *developed* -> *develop*).
+    * **Stopwords Filtering:** Menggabungkan daftar kata umum NLTK dengan *Custom Universal CV Stopwords* untuk memastikan hanya kata kunci kompetensi yang diproses oleh model.
+
+### 4. Machine Learning & MLOps
+* **Core Logic:** Menggunakan **Cosine Similarity** untuk mencari kemiripan arah vektor. Hal ini lebih efektif daripada pencarian kata kunci biasa karena mempertimbangkan bobot kepentingan sebuah kata (TF-IDF) dalam seluruh korpus data.
+* **Tracking:** Setiap eksperimen tuning (seperti penentuan `ngram_range`) dicatat secara otomatis menggunakan **MLflow**.
+  
+---
+
 ## Cara Menjalankan Proyek di Lokal (Untuk Minggu 4 & 5)
 Ketika proyek mulai memasuki fase pembuatan antarmuka UI (Streamlit), kode akan dijalankan di komputer lokal masing-masing.
 
