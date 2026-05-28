@@ -1,11 +1,12 @@
-PyPDF2
 pandas
 numpy
-spacy
+spacy==3.8.0
 nltk
+PyPDF2
 scikit-learn
-tensorflow
 mlflow
-streamlit
+joblib
 kagglehub
 tqdm
+streamlit
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
