@@ -1,13 +1,13 @@
 # CareerMatch AI 
 **Sistem Rekomendasi ATS CV Berbasis Natural Language Processing**
 
-Repositori ini merupakan ruang kerja utama untuk proyek Capstone tim **PJK-RM119** pada program Pijak x IBM SkillsBuild 2026. "CareerMatch AI" dibangun untuk mengotomatisasi pencocokan keahlian (*skills*) dari dokumen CV pelamar dengan deskripsi pekerjaan (*Job Postings*) menggunakan algoritma NLP.
+Repositori ini merupakan ruang kerja utama untuk proyek Capstone tim **PJK-RM119** pada program Pijak x IBM SkillsBuild 2026. "CareerMatch AI" dibangun untuk mengotomatisasi pencocokan keahlian (*skills*) dari dokumen CV pelamar dengan deskripsi pekerjaan (*Job Postings*) menggunakan algoritma NLP dan *Business Rule Heuristics*.
 
 ## Tim Pengembang (PJK-RM119)
-- **Armand Al-Farizy** (Lead AI Engineer & Project Manager)
-- **Aisyah Ridhalillah Putri** (Data Analyst)
-- **Islahul Hadi** (UI/UX & Documentation)
-- **Faber Dui Nababan** (QA Tester)
+- **Armand Al-Farizy** - `APC012D6Y0488` (Project Manager & Lead AI/ML Engineer)
+- **Aisyah Ridhalillah Putri** - `APC284D6X0336` (Data Analyst & Researcher)
+- **Islahul Hadi** - `APC308D6Y0437` (UI/UX & Documentation Specialist)
+- **Faber Dui Nababan** - `APC528D6Y0493` (QA Tester)
 
 ---
 
@@ -26,37 +26,43 @@ Google Colab **TIDAK** otomatis menyimpan perubahan ke GitHub. Setiap kali kamu 
 
 ---
 
-## Tech Stack & Minimum Viable Product (MVP)
+## Tech Stack & Data Source
 Sistem ini memproses data secara tidak terstruktur (PDF) menjadi representasi vektor yang terstruktur.
+- **Dataset Utama:** [Online Job Postings (Armenia 2004-2015)](https://www.kaggle.com/datasets/madhab/jobposts) berisi 19.000+ data lowongan kerja.
 - **Data Processing:** `PyPDF2`, `Pandas`, `NLTK`, `SpaCy`
-- **Machine Learning:** `Scikit-Learn` (TF-IDF, Cosine Similarity), `TensorFlow`
-- **MLOps:** `MLflow` (Untuk *tracking* eksperimen & model)
+- **Machine Learning:** `Scikit-Learn` (TF-IDF, Cosine Similarity)
+- **MLOps:** `MLflow` (Untuk *tracking* eksperimen & artefak model)
 - **Deployment Interface:** `Streamlit`
+
+---
 
 ## Technical Documentation & Architecture
 
-Sistem *CareerMatch AI* beroperasi menggunakan arsitektur pemrosesan data linier. Fokus utamanya adalah transformasi data tidak terstruktur menjadi representasi matematis yang dapat dibandingkan.
+Sistem *CareerMatch AI* beroperasi menggunakan arsitektur pemrosesan data linier yang dimodifikasi dengan logika *Business Rules* untuk mengatasi kesenjangan data historis.
 
-### 1. High-Level Workflow
-Sistem mengikuti alur kerja (pipeline) sebagai berikut:
-1. **Extraction:** Dokumen PDF dibaca secara mentah halaman demi halaman.
-2. **Purification:** Teks "disucikan" dari artefak digital (URL, Email, Simbol) tanpa menghilangkan terminologi IT (Alfanumerik).
-3. **Vectorization:** Teks bersih dikonversi menjadi matriks numerik menggunakan TF-IDF.
-4. **Scoring:** Menghitung jarak kosinus antara vektor CV dan vektor Lowongan Kerja untuk menentukan peringkat kecocokan.
+### 1. Data Acquisition & Cleaning Layer (Aisyah Ridhalillah Putri)
+* **Library:** `kagglehub`, `Pandas`
+* **Logika:** Mengakuisisi dataset secara dinamis ke memori tanpa membebani penyimpanan lokal. Data dibersihkan dengan menyingkirkan *missing values* pada kolom krusial (`Title`, `JobDescription`, `JobRequirment`, `RequiredQual`) dan menghapus data duplikat untuk menjaga keseimbangan vektor.
 
-### 2. Data Extraction Layer (Tugas 1.1)
+### 2. Data Extraction Layer (Armand Al-Farizy)
 * **Library:** `PyPDF2`
-* **Logika:** Fungsi `extract_pdf_text` melakukan iterasi pada setiap objek halaman PDF. Sistem dirancang untuk hanya menerima teks ATS-friendly. Jika teks tidak terdeteksi (PDF berbasis gambar), sistem akan memberikan nilai `None` sebagai pemicu (trigger) untuk fungsi *Error Handling* di sisi UI.
+* **Logika:** Fungsi `extract_pdf_text` melakukan iterasi pada setiap objek halaman PDF pelamar. Sistem dirancang untuk hanya menerima teks *ATS-friendly*.
 
-### 3. NLP Preprocessing Pipeline (Tugas 2.2)
-* **Library:** `spaCy` (Model: `en_core_web_sm`), `re`.
-* **Strategi:** * **Lemmatization:** Berbeda dengan *stemming*, kami menggunakan Lemmatization untuk menjaga makna kata (e.g., *developed* -> *develop*).
-    * **Stopwords Filtering:** Menggabungkan daftar kata umum NLTK dengan *Custom Universal CV Stopwords* untuk memastikan hanya kata kunci kompetensi yang diproses oleh model.
+### 3. NLP Preprocessing Pipeline (Armand Al-Farizy)
+* **Library:** `spaCy` (Model: `en_core_web_sm`), `re`, `NLTK`.
+* **Strategi:** * **Lemmatization:** Menggunakan Lemmatization (bukan *stemming*) untuk menjaga makna gramatikal teks.
+    * **Targeted Stopwords:** Menggabungkan *stopwords* NLTK dengan *Custom Universal CV Stopwords* dan *HR Fluff*, untuk mengeliminasi kata-kata pengisi (noise) dan memastikan hanya kompetensi teknis yang diekstrak.
 
-### 4. Machine Learning & MLOps
-* **Core Logic:** Menggunakan **Cosine Similarity** untuk mencari kemiripan arah vektor. Hal ini lebih efektif daripada pencarian kata kunci biasa karena mempertimbangkan bobot kepentingan sebuah kata (TF-IDF) dalam seluruh korpus data.
-* **Tracking:** Setiap eksperimen tuning (seperti penentuan `ngram_range`) dicatat secara otomatis menggunakan **MLflow**.
-  
+### 4. Machine Learning & MLOps Pipeline (Armand Al-Farizy)
+* **Representasi Numerik:** Mengubah korpus teks menjadi matriks menggunakan **TF-IDF Vectorizer** (Unigram & Bigram).
+* **Kalkulasi Jarak:** Menggunakan **Cosine Similarity** untuk menghitung kedekatan vektor CV dan vektor lowongan.
+* **Algoritma Optimasi (Business Rule Heuristics):**
+    * **Umbrella Terms Alignment:** Menyelaraskan istilah modern di CV (*e.g., Next.js, React*) ke istilah historis di dataset (*e.g., Web Development*) agar TF-IDF tidak kehilangan konteks.
+    * **Anti-Mismatch (Negative Filter):** Aturan pemblokiran lintas-domain (e.g., CV *Software Engineer* tidak akan direkomendasikan lowongan *Customs/Logistics*).
+    * **Title Boosting:** Mengalikan skor akhir jika judul lowongan cocok secara eksplisit dengan rumpun keahlian utama pelamar.
+    * **YoE Penalty:** Memberikan pemotongan skor 15% jika *Years of Experience* pelamar di bawah syarat lowongan.
+* **Tracking & Artifacts:** Menyimpan metrik evaluasi ke **MLflow** dan membungkus hasil pelatihan menjadi artefak `.joblib` untuk dideploy secara statis di *Streamlit*.
+
 ---
 
 ## Cara Menjalankan Proyek di Lokal (Untuk Minggu 4 & 5)
