@@ -68,7 +68,7 @@ Sistem *CareerMatch AI* beroperasi menggunakan arsitektur pemrosesan data linier
 * **Library:** `Streamlit`, `IPython.display` (Prototipe)
 * **Logika:** Pembuatan antarmuka pengguna responsif untuk interaksi pengunggahan CV. Implementasi logika *rendering* kartu rekomendasi (Job Cards) dinamis dengan indikator warna berbasis ambang batas metrik: Hijau Tua (>80%), Hijau Muda (>50%), dan Merah (<50%).
 
-### 6. QA/QC & Automated Testing Layer (Tim Pengembang)
+### 6. QA & Automated Testing Layer (Tim Pengembang)
 * **Environment:** `Google Colab`
 * **Logika:** Mengingat dinamika tim, proses Quality Assurance dilakukan melalui skrip *Automated Testing* mandiri di dalam Colab. Modul QA bertugas memvalidasi kelayakan antarmuka (*UI color mapping test*), memverifikasi keutuhan tipe data (*type checking* pada skor dan rank), serta menguji kekebalan sistem terhadap input data aneh (*edge case handler*).
 
