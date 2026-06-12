@@ -7,7 +7,7 @@ Repositori ini merupakan ruang kerja utama untuk proyek Capstone tim **PJK-RM119
 - **Armand Al-Farizy** - `APC012D6Y0488` (Project Manager & Lead AI/ML Engineer)
 - **Aisyah Ridhalillah Putri** - `APC284D6X0336` (Data Analyst & Researcher)
 - **Islahul Hadi** - `APC308D6Y0437` (UI/UX & Documentation Specialist)
-- **Faber Dui Nababan** - `APC528D6Y0493` (QA Tester)
+- **Faber Dui Nababan** - `APC528D6Y0493` (QA Tester) (Tidak Aktif)
 
 ---
 
@@ -32,7 +32,8 @@ Sistem ini memproses data secara tidak terstruktur (PDF) menjadi representasi ve
 - **Data Processing:** `PyPDF2`, `Pandas`, `NLTK`, `SpaCy`
 - **Machine Learning:** `Scikit-Learn` (TF-IDF, Cosine Similarity)
 - **MLOps:** `MLflow` (Untuk *tracking* eksperimen & artefak model)
-- **Deployment Interface:** `Streamlit`
+- **Deployment Interface:** `Streamlit`, `HTML/CSS`
+- **Automated Testing:** `Python Assertions` (Google Colab Environment)
 
 ---
 
@@ -63,21 +64,45 @@ Sistem *CareerMatch AI* beroperasi menggunakan arsitektur pemrosesan data linier
     * **YoE Penalty:** Memberikan pemotongan skor 15% jika *Years of Experience* pelamar di bawah syarat lowongan.
 * **Tracking & Artifacts:** Menyimpan metrik evaluasi ke **MLflow** dan membungkus hasil pelatihan menjadi artefak `.joblib` untuk dideploy secara statis di *Streamlit*.
 
+### 5. UI/UX & Deployment Layer (Islahul Hadi)
+* **Library:** `Streamlit`, `IPython.display` (Prototipe)
+* **Logika:** Pembuatan antarmuka pengguna responsif untuk interaksi pengunggahan CV. Implementasi logika *rendering* kartu rekomendasi (Job Cards) dinamis dengan indikator warna berbasis ambang batas metrik: Hijau Tua (>80%), Hijau Muda (>50%), dan Merah (<50%).
+
+### 6. QA/QC & Automated Testing Layer (Tim Pengembang)
+* **Environment:** `Google Colab`
+* **Logika:** Mengingat dinamika tim, proses Quality Assurance dilakukan melalui skrip *Automated Testing* mandiri di dalam Colab. Modul QA bertugas memvalidasi kelayakan antarmuka (*UI color mapping test*), memverifikasi keutuhan tipe data (*type checking* pada skor dan rank), serta menguji kekebalan sistem terhadap input data aneh (*edge case handler*).
+
 ---
 
-## Cara Menjalankan Proyek di Lokal (Untuk Minggu 4 & 5)
+## Cara Menjalankan Proyek di Lokal (Untuk Fase Deployment)
 Ketika proyek mulai memasuki fase pembuatan antarmuka UI (Streamlit), kode akan dijalankan di komputer lokal masing-masing.
 
 1. **Clone repositori ini:**
    ```bash
-   git clone https://github.com/ArcVielLouvent/PJK-RM119-CareerMatch-AI.git
+   git clone [https://github.com/ArcVielLouvent/PJK-RM119-CareerMatch-AI.git](https://github.com/ArcVielLouvent/PJK-RM119-CareerMatch-AI.git)
+   ```
+   
 2. **Masuk ke direktori proyek:**
-   ```bash
-   cd PJK-RM119-CareerMatch-AI
+
+```Bash
+cd PJK-RM119-CareerMatch-AI
+```
+
 3. **Buat Virtual Environment (Opsional tapi disarankan):**
-   ```bash
-   python -m venv env
-   env\Scripts\activate  # Untuk Windows pengguna CMD
+
+```Bash
+python -m venv env
+env\Scripts\activate  # Untuk pengguna Windows (CMD)
+```
+
 4. **Install semua library yang dibutuhkan:**
-   ```bash
-   pip install -r requirements.txt
+
+```Bash
+pip install -r requirements.txt
+```
+
+5. **Jalankan Aplikasi Streamlit:**
+
+```Bash
+streamlit run app.py
+```
