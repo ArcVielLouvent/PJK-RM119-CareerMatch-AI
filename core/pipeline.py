@@ -130,7 +130,7 @@ def _download_and_prepare_dataset(progress_callback=None) -> pd.DataFrame:
     import subprocess
     import zipfile
 
-    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+    BASE_DIR = os.path.dirname(__file__)
     DATA_DIR = os.path.join(BASE_DIR, "data")
     csv_path = os.path.join(DATA_DIR, "data job posts.csv")
 
